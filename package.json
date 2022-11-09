@@ -1,0 +1,24 @@
+{
+  "name": "express-samurai",
+  "version": "1.0.0",
+  "description": "backend express ts",
+  "main": "index.js",
+  "author": "Makhnev Andrey",
+  "license": "MIT",
+  "scripts": {
+    "watch": "tsc -w",
+    "dev-mon": "nodemon --inspect dist/index.js",
+    "dev": "concurrently \"yarn watch\" \"yarn dev-mon\""
+  },
+  "dependencies": {
+    "concurrently": "^7.5.0",
+    "express": "^4.18.2"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.14",
+    "@types/node": "^18.11.9",
+    "nodemon": "^2.0.20",
+    "ts-node": "^10.9.1",
+    "typescript": "^4.8.4"
+  }
+}
