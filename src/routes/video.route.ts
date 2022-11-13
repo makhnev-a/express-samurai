@@ -24,6 +24,25 @@ export let videos = [
     },
 ]
 
+export const checkResolutions = (requestArray: Resolutions[]) => {
+    const resolutions = [
+        Resolutions.P144,
+        Resolutions.P240,
+        Resolutions.P360,
+        Resolutions.P480,
+        Resolutions.P720,
+        Resolutions.P1080,
+        Resolutions.P1440,
+        Resolutions.P2160,
+    ]
+
+    if (requestArray.every(item => resolutions.includes(item))) {
+        return true
+    }
+
+    return false
+}
+
 export const videoRoute = express.Router({})
 export const testingRoute = express.Router({})
 
@@ -102,6 +121,15 @@ videoRoute.post(`/`, (req: Request, res: Response) => {
             message: "availableResolutions field not found",
             field: "availableResolutions"
         })
+    } else {
+        const resStatus: boolean = checkResolutions(req.body.availableResolutions)
+
+        if (!resStatus) {
+            error.push({
+                message: "availableResolutions should only include screen resolution options",
+                field: "availableResolutions"
+            })
+        }
     }
 
     if (error.length > 0) {
