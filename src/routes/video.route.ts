@@ -197,6 +197,15 @@ videoRoute.put(`/:videoId`, (req: Request, res: Response) => {
             message: "availableResolutions field not found",
             field: "availableResolutions"
         })
+    } else {
+        const resStatus: boolean = checkResolutions(req.body.availableResolutions)
+
+        if (!resStatus) {
+            error.push({
+                message: "availableResolutions should only include screen resolution options",
+                field: "availableResolutions"
+            })
+        }
     }
 
     if (!req.body.canBeDownloaded) {
@@ -237,6 +246,13 @@ videoRoute.put(`/:videoId`, (req: Request, res: Response) => {
             message: "publicationDate field not found",
             field: "publicationDate"
         })
+    } else {
+        if (typeof req.body.publicationDate === "string") {
+            error.push({
+                message: "publicationDate field not found",
+                field: "publicationDate"
+            })
+        }
     }
 
     if (error.length > 0) {
