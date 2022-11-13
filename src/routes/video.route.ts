@@ -1,7 +1,7 @@
 import express, {Request, Response} from "express"
 import {IVideo, Resolutions} from "../interfaces/video.interface";
 
-let videos = [
+export let videos = [
     {
         id: 1,
         title: "React video",
@@ -25,6 +25,12 @@ let videos = [
 ]
 
 export const videoRoute = express.Router({})
+export const testingRoute = express.Router({})
+
+testingRoute.delete(`/all-data`, (req: Request, res: Response) => {
+    videos = []
+    res.status(204)
+})
 
 videoRoute.get(`/`, (req: Request, res: Response) => {
     res.status(200).send(videos)
@@ -68,6 +74,13 @@ videoRoute.post(`/`, (req: Request, res: Response) => {
             message: "Title field not found",
             field: "title"
         })
+    } else {
+        if (req.body.title.length > 40) {
+            error.push({
+                message: "Title field length > 40 chars",
+                field: "title"
+            })
+        }
     }
 
     if (!req.body.author) {
@@ -75,6 +88,13 @@ videoRoute.post(`/`, (req: Request, res: Response) => {
             message: "Author field not found",
             field: "author"
         })
+    } else {
+        if (req.body.author.length > 20) {
+            error.push({
+                message: "Author field length > 20 chars",
+                field: "author"
+            })
+        }
     }
 
     if (!req.body.availableResolutions) {
@@ -121,6 +141,13 @@ videoRoute.put(`/:videoId`, (req: Request, res: Response) => {
             message: "Title field not found",
             field: "title"
         })
+    } else {
+        if (req.body.title.length > 40) {
+            error.push({
+                message: "Title field length > 40 chars",
+                field: "title"
+            })
+        }
     }
 
     if (!req.body.author) {
@@ -128,6 +155,13 @@ videoRoute.put(`/:videoId`, (req: Request, res: Response) => {
             message: "Author field not found",
             field: "author"
         })
+    } else {
+        if (req.body.author.length > 20) {
+            error.push({
+                message: "Author field length > 20 chars",
+                field: "author"
+            })
+        }
     }
 
     if (!req.body.availableResolutions) {
@@ -142,6 +176,13 @@ videoRoute.put(`/:videoId`, (req: Request, res: Response) => {
             message: "canBeDownloaded field not found",
             field: "canBeDownloaded"
         })
+    } else {
+        if (typeof req.body.canBeDownloaded !== "boolean") {
+            error.push({
+                message: "canBeDownloaded field must be boolean",
+                field: "canBeDownloaded"
+            })
+        }
     }
 
     if (!req.body.minAgeRestriction) {

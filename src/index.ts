@@ -1,5 +1,5 @@
 import express, {Request, Response} from "express"
-import {videoRoute} from "./routes/video.route"
+import {testingRoute, videoRoute} from "./routes/video.route"
 import bodyParser from "body-parser"
 
 export const app = express()
@@ -12,6 +12,7 @@ app.get("/", (req: Request, res: Response) => {
 })
 
 app.use("/api/videos", videoRoute)
+app.use("/api/testing", testingRoute)
 
 app.listen(port, () => {
     console.log(`Example app listening on port ${port}`)
