@@ -162,6 +162,7 @@ videoRoute.post(`/`, (req: Request, res: Response) => {
 })
 
 videoRoute.put(`/:videoId`, (req: Request, res: Response) => {
+    debugger
     const error = []
 
     if (!req.body.title) {
@@ -242,14 +243,15 @@ videoRoute.put(`/:videoId`, (req: Request, res: Response) => {
     }
 
     if (!req.body.publicationDate) {
+        debugger
         error.push({
             message: "publicationDate field not found",
             field: "publicationDate"
         })
     } else {
-        if (typeof req.body.publicationDate === "string") {
+        if (typeof req.body.publicationDate !== "string") {
             error.push({
-                message: "publicationDate field not found",
+                message: "publicationDate field must be a string",
                 field: "publicationDate"
             })
         }
