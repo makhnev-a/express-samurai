@@ -1,7 +1,7 @@
 import express, {Request, Response} from "express"
 import {IVideo, Resolutions} from "../interfaces/video.interface";
 
-const videos = [
+let videos = [
     {
         id: 1,
         title: "React video",
@@ -41,6 +41,11 @@ videoRoute.get(`/:videoId`, (req: Request, res: Response) => {
     res.sendStatus(404)
 })
 
+videoRoute.delete(`/testing/all-data`, (req: Request, res: Response) => {
+    videos = []
+    res.sendStatus(204)
+})
+
 videoRoute.delete(`/:videoId`, (req: Request, res: Response) => {
     const videoId = +req.params.videoId
 
@@ -74,8 +79,8 @@ videoRoute.post(`/`, (req: Request, res: Response) => {
 
     if (!req.body.availableResolutions) {
         error.push({
-            message: "Author field not found",
-            field: "author"
+            message: "availableResolutions field not found",
+            field: "availableResolutions"
         })
     }
 
@@ -105,7 +110,7 @@ videoRoute.post(`/`, (req: Request, res: Response) => {
     // @ts-ignore
     videos.push(video)
 
-    res.status(201).send(videos)
+    res.status(201).send(video)
 })
 
 videoRoute.put(`/:videoId`, (req: Request, res: Response) => {
@@ -198,5 +203,10 @@ videoRoute.put(`/:videoId`, (req: Request, res: Response) => {
         publicationDate
     }
 
+    res.sendStatus(204)
+})
+
+videoRoute.delete("/__test__/delete", (req: Request, res: Response) => {
+    videos = []
     res.sendStatus(204)
 })

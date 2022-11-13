@@ -2,7 +2,7 @@ import express, {Request, Response} from "express"
 import {videoRoute} from "./routes/video.route"
 import bodyParser from "body-parser"
 
-const app = express()
+export const app = express()
 const port = 5000
 
 app.use(bodyParser.json())
