@@ -29,7 +29,7 @@ export const testingRoute = express.Router({})
 
 testingRoute.delete(`/all-data`, (req: Request, res: Response) => {
     videos = []
-    res.status(204)
+    res.sendStatus(204)
 })
 
 videoRoute.get(`/`, (req: Request, res: Response) => {
