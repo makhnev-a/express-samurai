@@ -36,7 +36,7 @@ postRoute.delete("/:id", (req: Request, res: Response) => {
 postRoute.post("/", (req: Request, res: Response) => {
     const {title, shortDescription, content, blogId, blogName} = req.body
     const post: IPost = {
-        id: String(new Date()),
+        id: String(Number(new Date())),
         title,
         shortDescription,
         content,

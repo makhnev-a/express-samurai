@@ -1,9 +1,21 @@
 import express, {Request, Response} from "express";
 import { blogs } from "../db/local.db";
 import {IBlog} from "../interfaces/blog.interface";
-import {videoRoute} from "./video.route";
 
 export const blogsRoute = express.Router({})
+
+blogsRoute.post("/", (req: Request, res: Response) => {
+    const {name, description, websiteUrl} = req.body
+    const blog: IBlog = {
+        id: String(Number(new Date())),
+        name,
+        description,
+        websiteUrl
+    }
+
+    blogs.push(blog)
+    res.status(201).send(blog)
+})
 
 blogsRoute.get("/", (req: Request, res: Response) => {
     res.status(200).send(blogs)
@@ -34,18 +46,7 @@ blogsRoute.delete("/:id", (req: Request, res: Response) => {
     res.sendStatus(404)
 })
 
-videoRoute.post("/", (req: Request, res: Response) => {
-    const {name, description, websiteUrl} = req.body
-    const blog: IBlog = {
-        id: String(new Date()),
-        name,
-        description,
-        websiteUrl
-    }
 
-    blogs.push(blog)
-    res.status(201).send(blog)
-})
 
 /** Update blog route */
 blogsRoute.put("/:id", (req: Request, res: Response) => {
