@@ -1,7 +1,7 @@
 import express, {Request, Response} from "express";
 import { blogs } from "../db/local.db";
 import {IBlog} from "../interfaces/blog.interface";
-import {videoRoute, videos} from "./video.route";
+import {videoRoute} from "./video.route";
 
 export const blogsRoute = express.Router({})
 
