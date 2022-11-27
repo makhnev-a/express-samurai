@@ -1,6 +1,9 @@
 import express, {Request, Response} from "express"
-import {testingRoute, videoRoute} from "./routes/video.route"
+import {videoRoute} from "./routes/video.route"
 import bodyParser from "body-parser"
+import {blogsRoute} from "./routes/blogs.route";
+import {postRoute} from "./routes/post.route";
+import {testingRoute} from "./routes/testing.route";
 
 export const app = express()
 const port = 5000
@@ -12,6 +15,8 @@ app.get("/", (req: Request, res: Response) => {
 })
 
 app.use("/api/videos", videoRoute)
+app.use("/api/blogs", blogsRoute)
+app.use("/api/posts", postRoute)
 app.use("/api/testing", testingRoute)
 
 app.listen(port, () => {

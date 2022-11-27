@@ -1,28 +1,6 @@
 import express, {Request, Response} from "express"
 import {IVideo, Resolutions} from "../interfaces/video.interface";
-
-export let videos = [
-    {
-        id: 1,
-        title: "React video",
-        author: "Dan Abramov",
-        canBeDownloaded: true,
-        minAgeRestriction: null,
-        createdAt: "2022-11-10T15:05:44.985Z",
-        publicationDate: "2022-11-10T15:05:44.985Z",
-        availableResolutions: [Resolutions.P144, Resolutions.P240]
-    },
-    {
-        id: 2,
-        title: "Express video",
-        author: "TJ Holowaychuk",
-        canBeDownloaded: true,
-        minAgeRestriction: null,
-        createdAt: "2022-11-10T15:05:44.985Z",
-        publicationDate: "2022-11-10T15:05:44.985Z",
-        availableResolutions: [Resolutions.P480, Resolutions.P240, Resolutions.P720]
-    },
-]
+import {videos} from "../db/local.db";
 
 export const checkResolutions = (requestArray: Resolutions[]) => {
     const resolutions = [
@@ -44,12 +22,6 @@ export const checkResolutions = (requestArray: Resolutions[]) => {
 }
 
 export const videoRoute = express.Router({})
-export const testingRoute = express.Router({})
-
-testingRoute.delete(`/all-data`, (req: Request, res: Response) => {
-    videos = []
-    res.sendStatus(204)
-})
 
 videoRoute.get(`/`, (req: Request, res: Response) => {
     res.status(200).send(videos)
@@ -64,11 +36,6 @@ videoRoute.get(`/:videoId`, (req: Request, res: Response) => {
     }
 
     res.sendStatus(404)
-})
-
-videoRoute.delete(`/testing/all-data`, (req: Request, res: Response) => {
-    videos = []
-    res.sendStatus(204)
 })
 
 videoRoute.delete(`/:videoId`, (req: Request, res: Response) => {
@@ -162,7 +129,6 @@ videoRoute.post(`/`, (req: Request, res: Response) => {
 })
 
 videoRoute.put(`/:videoId`, (req: Request, res: Response) => {
-    debugger
     const error = []
 
     if (!req.body.title) {
@@ -290,10 +256,5 @@ videoRoute.put(`/:videoId`, (req: Request, res: Response) => {
         publicationDate
     }
 
-    res.sendStatus(204)
-})
-
-videoRoute.delete("/__test__/delete", (req: Request, res: Response) => {
-    videos = []
     res.sendStatus(204)
 })
