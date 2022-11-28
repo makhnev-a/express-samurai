@@ -1,19 +1,16 @@
 import express, {Request, Response} from "express";
-import { blogs } from "../db/local.db";
+import {blogs} from "../db/local.db";
 import {IBlog} from "../interfaces/blog.interface";
-import {atob} from "buffer";
+import {authMiddleware} from "../middlewares/auth.middleware";
+import blogValidators from "../validators/blog.validator";
 
 export const blogsRoute = express.Router({})
 
-blogsRoute.post("/", (req: Request, res: Response) => {
-    if (!req.headers.authorization) {
-        return res.sendStatus(401)
-    }
-
-    const authDataRaw = atob(req.headers.authorization.replace("Basic ", ""))
-    const basicData = authDataRaw.split(":")
-
-    if (basicData[0] === "admin" && basicData[1] === "qwerty") {
+blogsRoute.post(
+    "/",
+    authMiddleware,
+    [...blogValidators],
+    (req: Request, res: Response) => {
         const {name, description, websiteUrl} = req.body
         const blog: IBlog = {
             id: String(Number(new Date())),
@@ -23,11 +20,8 @@ blogsRoute.post("/", (req: Request, res: Response) => {
         }
 
         blogs.push(blog)
-        return res.status(201).send(blog)
-    }
-
-    return res.sendStatus(401)
-})
+        res.status(201).send(blog)
+    })
 
 blogsRoute.get("/", (req: Request, res: Response) => {
     res.status(200).send(blogs)
@@ -44,15 +38,10 @@ blogsRoute.get("/:id", (req: Request, res: Response) => {
     res.sendStatus(404)
 })
 
-blogsRoute.delete("/:id", (req: Request, res: Response) => {
-    if (!req.headers.authorization) {
-        return res.sendStatus(401)
-    }
-
-    const authDataRaw = atob(req.headers.authorization.replace("Basic ", ""))
-    const basicData = authDataRaw.split(":")
-
-    if (basicData[0] === "admin" && basicData[1] === "qwerty") {
+blogsRoute.delete(
+    "/:id",
+    authMiddleware,
+    (req: Request, res: Response) => {
         const blogId: string = req.params.id
 
         for (let i = 0; i < blogs.length; i++) {
@@ -63,23 +52,14 @@ blogsRoute.delete("/:id", (req: Request, res: Response) => {
             }
         }
 
-        return res.sendStatus(404)
-    }
+        res.sendStatus(404)
+    })
 
-    return res.sendStatus(401)
-})
-
-
-/** Update blog route */
-blogsRoute.put("/:id", (req: Request, res: Response) => {
-    if (!req.headers.authorization) {
-        return res.sendStatus(401)
-    }
-
-    const authDataRaw = atob(req.headers.authorization.replace("Basic ", ""))
-    const basicData = authDataRaw.split(":")
-
-    if (basicData[0] === "admin" && basicData[1] === "qwerty") {
+blogsRoute.put(
+    "/:id",
+    authMiddleware,
+    [...blogValidators],
+    (req: Request, res: Response) => {
         const blogId: string = req.params.id
         const {name, description, websiteUrl} = req.body
         const blog: IBlog | undefined = blogs.find(blog => blog.id === blogId)
@@ -96,9 +76,5 @@ blogsRoute.put("/:id", (req: Request, res: Response) => {
             description,
             websiteUrl
         }
-
-        return res.sendStatus(204)
-    }
-
-    res.sendStatus(401)
+        res.sendStatus(204)
 })

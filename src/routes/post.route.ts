@@ -1,7 +1,8 @@
 import express, {Request, Response} from "express";
-import { posts } from "../db/local.db";
+import {posts} from "../db/local.db";
 import {IPost} from "../interfaces/post.interface";
-import {atob} from "buffer";
+import {authMiddleware} from "../middlewares/auth.middleware";
+import postValidators from "../validators/post.validator";
 
 export const postRoute = express.Router({})
 
@@ -20,15 +21,10 @@ postRoute.get("/:id", (req: Request, res: Response) => {
     res.sendStatus(404)
 })
 
-postRoute.delete("/:id", (req: Request, res: Response) => {
-    if (!req.headers.authorization) {
-        return res.sendStatus(401)
-    }
-
-    const authDataRaw = atob(req.headers.authorization.replace("Basic ", ""))
-    const basicData = authDataRaw.split(":")
-
-    if (basicData[0] === "admin" && basicData[1] === "qwerty") {
+postRoute.delete(
+    "/:id",
+    authMiddleware,
+    (req: Request, res: Response) => {
         const postId: string = req.params.id
 
         for (let i = 0; i < posts.length; i++) {
@@ -39,21 +35,14 @@ postRoute.delete("/:id", (req: Request, res: Response) => {
             }
         }
 
-        return res.sendStatus(404)
-    }
-
-    return res.sendStatus(401)
+        res.sendStatus(404)
 })
 
-postRoute.post("/", (req: Request, res: Response) => {
-    if (!req.headers.authorization) {
-        return res.sendStatus(401)
-    }
-
-    const authDataRaw = atob(req.headers.authorization.replace("Basic ", ""))
-    const basicData = authDataRaw.split(":")
-
-    if (basicData[0] === "admin" && basicData[1] === "qwerty") {
+postRoute.post(
+    "/",
+    authMiddleware,
+    [...postValidators],
+    (req: Request, res: Response) => {
         const {title, shortDescription, content, blogId, blogName} = req.body
         const post: IPost = {
             id: String(Number(new Date())),
@@ -65,21 +54,14 @@ postRoute.post("/", (req: Request, res: Response) => {
         }
 
         posts.push(post)
-        return res.status(201).send(post)
-    }
-
-    return res.sendStatus(401)
+        res.status(201).send(post)
 })
 
-postRoute.put("/:id", (req: Request, res: Response) => {
-    if (!req.headers.authorization) {
-        return res.sendStatus(401)
-    }
-
-    const authDataRaw = atob(req.headers.authorization.replace("Basic ", ""))
-    const basicData = authDataRaw.split(":")
-
-    if (basicData[0] === "admin" && basicData[1] === "qwerty") {
+postRoute.put(
+    "/:id",
+    authMiddleware,
+    [...postValidators],
+    (req: Request, res: Response) => {
         const postId: string = req.params.id
         const {title, shortDescription, content, blogId, blogName} = req.body
         const post: IPost | undefined = posts.find(post => post.id === postId)
@@ -99,9 +81,5 @@ postRoute.put("/:id", (req: Request, res: Response) => {
             blogName,
         }
 
-        return res.sendStatus(204)
-    }
-
-    return res.sendStatus(401)
+        res.sendStatus(204)
 })
-
