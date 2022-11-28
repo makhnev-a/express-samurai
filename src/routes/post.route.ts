@@ -1,6 +1,7 @@
 import express, {Request, Response} from "express";
 import { posts } from "../db/local.db";
 import {IPost} from "../interfaces/post.interface";
+import {atob} from "buffer";
 
 export const postRoute = express.Router({})
 
@@ -20,54 +21,87 @@ postRoute.get("/:id", (req: Request, res: Response) => {
 })
 
 postRoute.delete("/:id", (req: Request, res: Response) => {
-    const postId: string = req.params.id
+    if (!req.headers.authorization) {
+        return res.sendStatus(401)
+    }
 
-    for (let i = 0; i < posts.length; i++) {
-        if (posts[i].id === postId) {
-            posts.splice(i, 1)
+    const authDataRaw = atob(req.headers.authorization.replace("Basic ", ""))
+    const basicData = authDataRaw.split(":")
 
-            return res.sendStatus(204)
+    if (basicData[0] === "admin" && basicData[1] === "qwerty") {
+        const postId: string = req.params.id
+
+        for (let i = 0; i < posts.length; i++) {
+            if (posts[i].id === postId) {
+                posts.splice(i, 1)
+
+                return res.sendStatus(204)
+            }
         }
-    }
 
-    res.sendStatus(404)
-})
-
-postRoute.post("/", (req: Request, res: Response) => {
-    const {title, shortDescription, content, blogId, blogName} = req.body
-    const post: IPost = {
-        id: String(Number(new Date())),
-        title,
-        shortDescription,
-        content,
-        blogId,
-        blogName
-    }
-
-    posts.push(post)
-    res.status(201).send(post)
-})
-
-postRoute.put("/:id", (req: Request, res: Response) => {
-    const postId: string = req.params.id
-    const {title, shortDescription, content, blogId, blogName} = req.body
-    const post: IPost | undefined = posts.find(post => post.id === postId)
-
-    if (!post) {
         return res.sendStatus(404)
     }
 
-    const postIndex = posts.findIndex(post => post.id === postId)
+    return res.sendStatus(401)
+})
 
-    posts[postIndex] = {
-        ...post,
-        title,
-        shortDescription,
-        content,
-        blogId,
-        blogName,
+postRoute.post("/", (req: Request, res: Response) => {
+    if (!req.headers.authorization) {
+        return res.sendStatus(401)
     }
 
-    res.sendStatus(204)
+    const authDataRaw = atob(req.headers.authorization.replace("Basic ", ""))
+    const basicData = authDataRaw.split(":")
+
+    if (basicData[0] === "admin" && basicData[1] === "qwerty") {
+        const {title, shortDescription, content, blogId, blogName} = req.body
+        const post: IPost = {
+            id: String(Number(new Date())),
+            title,
+            shortDescription,
+            content,
+            blogId,
+            blogName
+        }
+
+        posts.push(post)
+        return res.status(201).send(post)
+    }
+
+    return res.sendStatus(401)
+})
+
+postRoute.put("/:id", (req: Request, res: Response) => {
+    if (!req.headers.authorization) {
+        return res.sendStatus(401)
+    }
+
+    const authDataRaw = atob(req.headers.authorization.replace("Basic ", ""))
+    const basicData = authDataRaw.split(":")
+
+    if (basicData[0] === "admin" && basicData[1] === "qwerty") {
+        const postId: string = req.params.id
+        const {title, shortDescription, content, blogId, blogName} = req.body
+        const post: IPost | undefined = posts.find(post => post.id === postId)
+
+        if (!post) {
+            return res.sendStatus(404)
+        }
+
+        const postIndex = posts.findIndex(post => post.id === postId)
+
+        posts[postIndex] = {
+            ...post,
+            title,
+            shortDescription,
+            content,
+            blogId,
+            blogName,
+        }
+
+        return res.sendStatus(204)
+    }
+
+    return res.sendStatus(401)
 })
 
