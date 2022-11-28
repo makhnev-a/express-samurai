@@ -75,6 +75,7 @@ postRoute.put(
         const postId: string = req.params.id
         const {title, shortDescription, content, blogId, blogName} = req.body
         const post: IPost | undefined = posts.find(post => post.id === postId)
+        const blog: IBlog | undefined = blogs.find(blog => blog.id === blogId)
 
         if (!post) {
             return res.sendStatus(404)
@@ -88,7 +89,7 @@ postRoute.put(
             shortDescription,
             content,
             blogId,
-            blogName,
+            blogName: blog?.name,
         }
 
         res.sendStatus(204)
