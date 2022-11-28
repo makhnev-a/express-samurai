@@ -43,11 +43,9 @@ postRoute.delete(
 postRoute.post(
     "/",
     authMiddleware,
-    [
-        ...titleValidate,
-        ...shortDescriptionValidate,
-        ...contentValidate
-    ],
+    titleValidate,
+    shortDescriptionValidate,
+    contentValidate,
     (req: Request, res: Response) => {
         const {title, shortDescription, content, blogId, blogName} = req.body
         const post: IPost = {
@@ -68,11 +66,9 @@ postRoute.put(
     "/:id",
     checkIdParamPost,
     authMiddleware,
-    [
-        ...titleValidate,
-        ...shortDescriptionValidate,
-        ...contentValidate
-    ],
+    titleValidate,
+    shortDescriptionValidate,
+    contentValidate,
     (req: Request, res: Response) => {
         const postId: string = req.params.id
         const {title, shortDescription, content, blogId, blogName} = req.body

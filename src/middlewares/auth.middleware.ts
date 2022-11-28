@@ -1,7 +1,7 @@
 import {NextFunction, Request, Response} from "express";
 import {atob} from "buffer";
 
-export const authMiddleware = (req: Request, res: Response, next: NextFunction) => {
+export const authMiddleware = async (req: Request, res: Response, next: NextFunction) => {
     if (req.headers.authorization) {
         let authData
 
