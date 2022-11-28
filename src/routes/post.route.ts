@@ -2,7 +2,7 @@ import express, {Request, Response} from "express";
 import {posts} from "../db/local.db";
 import {IPost} from "../interfaces/post.interface";
 import {authMiddleware} from "../middlewares/auth.middleware";
-import postValidators from "../validators/post.validator";
+import postValidators, {contentValidate, shortDescriptionValidate, titleValidate} from "../validators/post.validator";
 
 export const postRoute = express.Router({})
 
@@ -41,7 +41,11 @@ postRoute.delete(
 postRoute.post(
     "/",
     authMiddleware,
-    [...postValidators],
+    [
+        ...titleValidate,
+        ...shortDescriptionValidate,
+        ...contentValidate
+    ],
     (req: Request, res: Response) => {
         const {title, shortDescription, content, blogId, blogName} = req.body
         const post: IPost = {
