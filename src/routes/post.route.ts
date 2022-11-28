@@ -1,9 +1,10 @@
 import express, {Request, Response} from "express";
-import {posts} from "../db/local.db";
+import {blogs, posts} from "../db/local.db";
 import {IPost} from "../interfaces/post.interface";
 import {authMiddleware} from "../middlewares/auth.middleware";
 import {contentValidate, shortDescriptionValidate, titleValidate} from "../validators/post.validator";
 import {checkIdParamPost} from "../middlewares/error.middleware";
+import {IBlog} from "../interfaces/blog.interface";
 
 export const postRoute = express.Router({})
 
@@ -47,18 +48,19 @@ postRoute.post(
     shortDescriptionValidate,
     contentValidate,
     (req: Request, res: Response) => {
-        const {title, shortDescription, content, blogId, blogName} = req.body
+        const {title, shortDescription, content, blogId} = req.body
+        const blog: IBlog | undefined = blogs.find(blog => blog.id === blogId)
+
         const post: IPost = {
             id: String(Number(new Date())),
             title,
             shortDescription,
             content,
             blogId,
-            // blogName
+            blogName: blog?.name
         }
 
         posts.push(post)
-        // const {blogName: bn, ...otherPost} = post
         res.status(201).send(post)
 })
 
