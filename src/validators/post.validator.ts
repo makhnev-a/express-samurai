@@ -42,7 +42,7 @@ export const contentValidate = [
             message: "content field is not exist",
             field: "content"
         }),
-    body("shortDescription")
+    body("content")
         .trim()
         .isLength({min: 1, max: 1000})
         .withMessage({
@@ -64,7 +64,7 @@ export const blogIdValidate = [
             message: "blogId is not a string",
             field: "blogId"
         }),
-    body("bloggerId")
+    body("blogId")
         .custom(async (value) => {
             const blog: IBlog | undefined = blogs.find(blog => blog.id === value)
 
