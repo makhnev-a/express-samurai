@@ -2,7 +2,7 @@ import express, {Request, Response} from "express";
 import {blogs, posts} from "../db/local.db";
 import {IPost} from "../interfaces/post.interface";
 import {authMiddleware} from "../middlewares/auth.middleware";
-import {contentValidate, shortDescriptionValidate, titleValidate} from "../validators/post.validator";
+import {blogIdValidate, contentValidate, shortDescriptionValidate, titleValidate} from "../validators/post.validator";
 import {checkErrorsMiddleware, checkIdParamPost} from "../middlewares/error.middleware";
 import {IBlog} from "../interfaces/blog.interface";
 
@@ -47,7 +47,8 @@ postRoute.post(
     [
         ...titleValidate,
         ...shortDescriptionValidate,
-        ...contentValidate
+        ...contentValidate,
+        ...blogIdValidate
     ],
     checkErrorsMiddleware,
     (req: Request, res: Response) => {
@@ -74,7 +75,8 @@ postRoute.put(
     [
         ...titleValidate,
         ...shortDescriptionValidate,
-        ...contentValidate
+        ...contentValidate,
+        ...blogIdValidate
     ],
     checkErrorsMiddleware,
     (req: Request, res: Response) => {
