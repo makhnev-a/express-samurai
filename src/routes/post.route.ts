@@ -60,7 +60,8 @@ postRoute.post(
         }
 
         posts.push(post)
-        res.status(201).send(post)
+        const {blogName: bn, ...otherPost} = post
+        res.status(201).send(otherPost)
 })
 
 postRoute.put(
