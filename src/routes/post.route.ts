@@ -3,7 +3,7 @@ import {blogs, posts} from "../db/local.db";
 import {IPost} from "../interfaces/post.interface";
 import {authMiddleware} from "../middlewares/auth.middleware";
 import {contentValidate, shortDescriptionValidate, titleValidate} from "../validators/post.validator";
-import {checkIdParamPost} from "../middlewares/error.middleware";
+import {checkErrorsMiddleware, checkIdParamPost} from "../middlewares/error.middleware";
 import {IBlog} from "../interfaces/blog.interface";
 
 export const postRoute = express.Router({})
@@ -44,9 +44,12 @@ postRoute.delete(
 postRoute.post(
     "/",
     authMiddleware,
-    titleValidate,
-    shortDescriptionValidate,
-    contentValidate,
+    [
+        ...titleValidate,
+        ...shortDescriptionValidate,
+        ...contentValidate
+    ],
+    checkErrorsMiddleware,
     (req: Request, res: Response) => {
         const {title, shortDescription, content, blogId} = req.body
         const blog: IBlog | undefined = blogs.find(blog => blog.id === blogId)
@@ -68,9 +71,12 @@ postRoute.put(
     "/:id",
     checkIdParamPost,
     authMiddleware,
-    titleValidate,
-    shortDescriptionValidate,
-    contentValidate,
+    [
+        ...titleValidate,
+        ...shortDescriptionValidate,
+        ...contentValidate
+    ],
+    checkErrorsMiddleware,
     (req: Request, res: Response) => {
         const postId: string = req.params.id
         const {title, shortDescription, content, blogId, blogName} = req.body
