@@ -2,7 +2,8 @@ import express, {Request, Response} from "express";
 import {posts} from "../db/local.db";
 import {IPost} from "../interfaces/post.interface";
 import {authMiddleware} from "../middlewares/auth.middleware";
-import postValidators, {contentValidate, shortDescriptionValidate, titleValidate} from "../validators/post.validator";
+import {contentValidate, shortDescriptionValidate, titleValidate} from "../validators/post.validator";
+import {checkIdParamPost} from "../middlewares/error.middleware";
 
 export const postRoute = express.Router({})
 
@@ -11,18 +12,19 @@ postRoute.get("/", (req: Request, res: Response) => {
 })
 
 postRoute.get("/:id", (req: Request, res: Response) => {
-    const postId: string = req.params.id
-    const post: IPost | undefined = posts.find(post => post.id === postId)
+        const postId: string = req.params.id
+        const post: IPost | undefined = posts.find(post => post.id === postId)
 
-    if (post) {
-        return res.status(200).send(post)
-    }
+        if (post) {
+            return res.status(200).send(post)
+        }
 
-    res.sendStatus(404)
-})
+        res.sendStatus(404)
+    })
 
 postRoute.delete(
     "/:id",
+    checkIdParamPost,
     authMiddleware,
     (req: Request, res: Response) => {
         const postId: string = req.params.id
@@ -63,8 +65,13 @@ postRoute.post(
 
 postRoute.put(
     "/:id",
+    checkIdParamPost,
     authMiddleware,
-    [...postValidators],
+    [
+        ...titleValidate,
+        ...shortDescriptionValidate,
+        ...contentValidate
+    ],
     (req: Request, res: Response) => {
         const postId: string = req.params.id
         const {title, shortDescription, content, blogId, blogName} = req.body
