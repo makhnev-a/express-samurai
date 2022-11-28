@@ -1,7 +1,6 @@
 import express, {Request, Response} from "express";
 import { posts } from "../db/local.db";
 import {IPost} from "../interfaces/post.interface";
-import {atob} from "buffer";
 
 export const postRoute = express.Router({})
 
@@ -25,7 +24,7 @@ postRoute.delete("/:id", (req: Request, res: Response) => {
         return res.sendStatus(401)
     }
 
-    const authDataRaw = atob(req.headers.authorization.replace("Basic ", ""))
+    const authDataRaw = req.headers.authorization.replace("Basic ", "")
     const basicData = authDataRaw.split(":")
 
     if (basicData[0] === "admin" && basicData[1] === "qwerty") {
@@ -50,7 +49,7 @@ postRoute.post("/", (req: Request, res: Response) => {
         return res.sendStatus(401)
     }
 
-    const authDataRaw = atob(req.headers.authorization.replace("Basic ", ""))
+    const authDataRaw = req.headers.authorization.replace("Basic ", "")
     const basicData = authDataRaw.split(":")
 
     if (basicData[0] === "admin" && basicData[1] === "qwerty") {
@@ -76,7 +75,7 @@ postRoute.put("/:id", (req: Request, res: Response) => {
         return res.sendStatus(401)
     }
 
-    const authDataRaw = atob(req.headers.authorization.replace("Basic ", ""))
+    const authDataRaw = req.headers.authorization.replace("Basic ", "")
     const basicData = authDataRaw.split(":")
 
     if (basicData[0] === "admin" && basicData[1] === "qwerty") {

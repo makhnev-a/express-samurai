@@ -1,7 +1,6 @@
 import express, {Request, Response} from "express";
 import { blogs } from "../db/local.db";
 import {IBlog} from "../interfaces/blog.interface";
-import {atob} from "buffer";
 
 export const blogsRoute = express.Router({})
 
@@ -10,7 +9,7 @@ blogsRoute.post("/", (req: Request, res: Response) => {
         return res.sendStatus(401)
     }
 
-    const authDataRaw = atob(req.headers.authorization.replace("Basic ", ""))
+    const authDataRaw = req.headers.authorization.replace("Basic ", "")
     const basicData = authDataRaw.split(":")
 
     if (basicData[0] === "admin" && basicData[1] === "qwerty") {
@@ -49,7 +48,7 @@ blogsRoute.delete("/:id", (req: Request, res: Response) => {
         return res.sendStatus(401)
     }
 
-    const authDataRaw = atob(req.headers.authorization.replace("Basic ", ""))
+    const authDataRaw = req.headers.authorization.replace("Basic ", "")
     const basicData = authDataRaw.split(":")
 
     if (basicData[0] === "admin" && basicData[1] === "qwerty") {
@@ -76,7 +75,7 @@ blogsRoute.put("/:id", (req: Request, res: Response) => {
         return res.sendStatus(401)
     }
 
-    const authDataRaw = atob(req.headers.authorization.replace("Basic ", ""))
+    const authDataRaw = req.headers.authorization.replace("Basic ", "")
     const basicData = authDataRaw.split(":")
 
     if (basicData[0] === "admin" && basicData[1] === "qwerty") {
