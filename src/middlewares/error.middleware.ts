@@ -12,7 +12,7 @@ export const checkErrorsMiddleware = (req: Request, res: Response, next: NextFun
     if (!errorResult.isEmpty()) {
         const errArray = Object.values(errorResult.mapped())
 
-        return res.status(404).send({
+        return res.status(400).send({
             errorsMessages: errArray
         })
     }
