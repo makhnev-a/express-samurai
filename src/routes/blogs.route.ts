@@ -69,14 +69,14 @@ blogsRoute.put(
     [...blogValidators],
     async (req: Request, res: Response) => {
         const blogId: string = req.params.id
-        const {name, shortDescription, websiteUrl} = req.body
+        const {name, description, websiteUrl} = req.body
         const blog: IBlog | null = await blogRepository.findOneBlog(blogId)
 
         if (!blog) {
             return res.sendStatus(404)
         }
 
-        const isUpdate: boolean = await blogRepository.updateBlog(blogId, name, shortDescription, websiteUrl)
+        const isUpdate: boolean = await blogRepository.updateBlog(blogId, name, description, websiteUrl)
 
         if (!isUpdate) {
             return res.sendStatus(404)
