@@ -209,7 +209,6 @@ videoRoute.put(`/:videoId`, (req: Request, res: Response) => {
     }
 
     if (!req.body.publicationDate) {
-        debugger
         error.push({
             message: "publicationDate field not found",
             field: "publicationDate"

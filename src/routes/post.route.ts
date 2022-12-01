@@ -2,7 +2,7 @@ import express, {Request, Response} from "express";
 import {IPost} from "../interfaces/post.interface";
 import {authMiddleware} from "../middlewares/auth.middleware";
 import postValidate from "../validators/post.validator";
-import {checkErrorsMiddleware, checkIdParamPost} from "../middlewares/error.middleware";
+import {checkIdParamPost} from "../middlewares/error.middleware";
 import {IBlog} from "../interfaces/blog.interface";
 import {postRepository} from "../repositories/mongo/post.repository";
 import {blogRepository} from "../repositories/mongo/blog.repository";
@@ -43,14 +43,7 @@ postRoute.delete(
 postRoute.post(
     "/",
     authMiddleware,
-    // [
-    //     ...titleValidate,
-    //     ...shortDescriptionValidate,
-    //     ...contentValidate,
-    //     ...blogIdValidate
-    // ],
     postValidate,
-    checkErrorsMiddleware,
     async (req: Request, res: Response) => {
         const {title, shortDescription, content, blogId} = req.body
         const blog: IBlog | null = await blogRepository.findOneBlog(blogId)
@@ -70,14 +63,7 @@ postRoute.put(
     "/:id",
     checkIdParamPost,
     authMiddleware,
-    // [
-    //     ...titleValidate,
-    //     ...shortDescriptionValidate,
-    //     ...contentValidate,
-    //     ...blogIdValidate
-    // ],
     postValidate,
-    checkErrorsMiddleware,
     async (req: Request, res: Response) => {
         const postId: string = req.params.id
         const {title, shortDescription, content, blogId} = req.body

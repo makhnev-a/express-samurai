@@ -49,8 +49,6 @@ describe("videoTests", () => {
         const createVideo = createResponse.body
         console.log(createVideo.availableResolutions)
         let tt = checkEnumArray(createVideo.availableResolutions)
-        console.log(tt)
-        // debugger
 
         expect(createVideo).toEqual({
             id: expect.any(Number),
