@@ -1,104 +1,101 @@
 import express, {Request, Response} from "express";
-import {blogs, posts} from "../db/local.db";
 import {IPost} from "../interfaces/post.interface";
 import {authMiddleware} from "../middlewares/auth.middleware";
-import {blogIdValidate, contentValidate, shortDescriptionValidate, titleValidate} from "../validators/post.validator";
+import postValidate from "../validators/post.validator";
 import {checkErrorsMiddleware, checkIdParamPost} from "../middlewares/error.middleware";
 import {IBlog} from "../interfaces/blog.interface";
+import {postRepository} from "../repositories/mongo/post.repository";
+import {blogRepository} from "../repositories/mongo/blog.repository";
 
 export const postRoute = express.Router({})
 
-postRoute.get("/", (req: Request, res: Response) => {
+postRoute.get("/", async (req: Request, res: Response) => {
+    const posts: IPost[] = await postRepository.findAllPosts()
     res.status(200).send(posts)
 })
 
-postRoute.get("/:id", (req: Request, res: Response) => {
-        const postId: string = req.params.id
-        const post: IPost | undefined = posts.find(post => post.id === postId)
+postRoute.get("/:id", async (req: Request, res: Response) => {
+    const postId: string = req.params.id
+    const post: IPost | null = await postRepository.findOnePost(postId)
 
-        if (post) {
-            return res.status(200).send(post)
-        }
+    if (post) {
+        return res.status(200).send(post)
+    }
 
-        res.sendStatus(404)
-    })
+    res.sendStatus(404)
+})
 
 postRoute.delete(
     "/:id",
     checkIdParamPost,
     authMiddleware,
-    (req: Request, res: Response) => {
+    async (req: Request, res: Response) => {
         const postId: string = req.params.id
+        const isDeleted: boolean = await postRepository.removePost(postId)
 
-        for (let i = 0; i < posts.length; i++) {
-            if (posts[i].id === postId) {
-                posts.splice(i, 1)
-
-                return res.sendStatus(204)
-            }
+        if (!isDeleted) {
+            return res.sendStatus(404)
         }
 
-        res.sendStatus(404)
-})
+        res.sendStatus(204)
+    })
 
 postRoute.post(
     "/",
     authMiddleware,
-    [
-        ...titleValidate,
-        ...shortDescriptionValidate,
-        ...contentValidate,
-        ...blogIdValidate
-    ],
+    // [
+    //     ...titleValidate,
+    //     ...shortDescriptionValidate,
+    //     ...contentValidate,
+    //     ...blogIdValidate
+    // ],
+    postValidate,
     checkErrorsMiddleware,
-    (req: Request, res: Response) => {
+    async (req: Request, res: Response) => {
         const {title, shortDescription, content, blogId} = req.body
-        const blog: IBlog | undefined = blogs.find(blog => blog.id === blogId)
-
-        const post: IPost = {
-            id: String(Number(new Date())),
+        const blog: IBlog | null = await blogRepository.findOneBlog(blogId)
+        const post: IPost | null = await postRepository.createPost({
+            createdAt: new Date().toISOString(),
             title,
             shortDescription,
             content,
             blogId,
             blogName: blog?.name
-        }
+        })
 
-        posts.push(post)
         res.status(201).send(post)
-})
+    })
 
 postRoute.put(
     "/:id",
     checkIdParamPost,
     authMiddleware,
-    [
-        ...titleValidate,
-        ...shortDescriptionValidate,
-        ...contentValidate,
-        ...blogIdValidate
-    ],
+    // [
+    //     ...titleValidate,
+    //     ...shortDescriptionValidate,
+    //     ...contentValidate,
+    //     ...blogIdValidate
+    // ],
+    postValidate,
     checkErrorsMiddleware,
-    (req: Request, res: Response) => {
+    async (req: Request, res: Response) => {
         const postId: string = req.params.id
-        const {title, shortDescription, content, blogId, blogName} = req.body
-        const post: IPost | undefined = posts.find(post => post.id === postId)
-        const blog: IBlog | undefined = blogs.find(blog => blog.id === blogId)
+        const {title, shortDescription, content, blogId} = req.body
+
+        const post: IPost | null = await postRepository.findOnePost(postId)
+        const blog: IBlog | null = await blogRepository.findOneBlog(blogId)
 
         if (!post) {
             return res.sendStatus(404)
         }
 
-        const postIndex = posts.findIndex(post => post.id === postId)
-
-        posts[postIndex] = {
-            ...post,
+        await postRepository.updatePost(
+            postId,
             title,
             shortDescription,
             content,
-            blogId,
-            blogName: blog?.name,
-        }
+            blogId
+        )
 
         res.sendStatus(204)
-})
+    })

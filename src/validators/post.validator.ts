@@ -2,6 +2,7 @@ import {body} from "express-validator";
 import {IBlog} from "../interfaces/blog.interface";
 import {blogs} from "../db/local.db";
 import {checkErrorsMiddleware} from "../middlewares/error.middleware";
+import {blogRepository} from "../repositories/mongo/blog.repository";
 
 export const titleValidate = [
     body("title")
@@ -66,7 +67,7 @@ export const blogIdValidate = [
         }),
     body("blogId")
         .custom(async (value) => {
-            const blog: IBlog | undefined = blogs.find(blog => blog.id === value)
+            const blog: IBlog | null = await blogRepository.findOneBlog(value)
 
             if (!blog) {
                 throw ({

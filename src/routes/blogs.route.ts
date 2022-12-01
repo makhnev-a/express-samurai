@@ -1,8 +1,9 @@
 import express, {Request, Response} from "express";
-import {blogs} from "../db/local.db";
 import {IBlog} from "../interfaces/blog.interface";
 import {authMiddleware} from "../middlewares/auth.middleware";
 import blogValidators from "../validators/blog.validator";
+import {blogRepository} from "../repositories/mongo/blog.repository";
+import expressAsyncHandler from "express-async-handler";
 
 export const blogsRoute = express.Router({})
 
@@ -10,26 +11,31 @@ blogsRoute.post(
     "/",
     authMiddleware,
     [...blogValidators],
-    (req: Request, res: Response) => {
+    async (req: Request, res: Response) => {
         const {name, description, websiteUrl} = req.body
-        const blog: IBlog = {
-            id: String(Number(new Date())),
+        const blog: IBlog | null = await blogRepository.createBlog({
             name,
             description,
-            websiteUrl
+            websiteUrl,
+            createdAt: new Date().toISOString()
+        })
+
+        if (!blog) {
+            return res.sendStatus(404)
         }
 
-        blogs.push(blog)
         res.status(201).send(blog)
     })
 
-blogsRoute.get("/", (req: Request, res: Response) => {
+blogsRoute.get("/", expressAsyncHandler(async (req: Request, res: Response) => {
+    debugger
+    const blogs: IBlog[] = await blogRepository.findAllBlogs()
     res.status(200).send(blogs)
-})
+}))
 
-blogsRoute.get("/:id", (req: Request, res: Response) => {
+blogsRoute.get("/:id", async (req: Request, res: Response) => {
     const blogId: string = req.params.id
-    const blog: IBlog | undefined = blogs.find(blog => blog.id === blogId)
+    const blog: IBlog | null = await blogRepository.findOneBlog(blogId)
 
     if (blog) {
         return res.status(200).send(blog)
@@ -41,40 +47,43 @@ blogsRoute.get("/:id", (req: Request, res: Response) => {
 blogsRoute.delete(
     "/:id",
     authMiddleware,
-    (req: Request, res: Response) => {
+    async (req: Request, res: Response) => {
         const blogId: string = req.params.id
 
-        for (let i = 0; i < blogs.length; i++) {
-            if (blogs[i].id === blogId) {
-                blogs.splice(i, 1)
+        const blog: IBlog | null = await blogRepository.findOneBlog(blogId)
 
-                return res.sendStatus(204)
-            }
+        if (!blog) {
+            return res.sendStatus(404)
         }
 
-        res.sendStatus(404)
+        const isDeleted: boolean = await blogRepository.removeBlog(blogId)
+
+        if (!isDeleted) {
+            return res.sendStatus(404)
+        }
+
+        res.sendStatus(204)
     })
 
 blogsRoute.put(
     "/:id",
     authMiddleware,
     [...blogValidators],
-    (req: Request, res: Response) => {
+    async (req: Request, res: Response) => {
         const blogId: string = req.params.id
         const {name, description, websiteUrl} = req.body
-        const blog: IBlog | undefined = blogs.find(blog => blog.id === blogId)
+
+        const blog: IBlog | null = await blogRepository.findOneBlog(blogId)
 
         if (!blog) {
             return res.sendStatus(404)
         }
 
-        const blogIndex = blogs.findIndex(blog => blog.id === blogId)
+        const isUpdate: boolean = await blogRepository.updateBlog(blogId, name, description, websiteUrl)
 
-        blogs[blogIndex] = {
-            ...blog,
-            name,
-            description,
-            websiteUrl
+        if (!isUpdate) {
+            return res.sendStatus(404)
         }
+
         res.sendStatus(204)
-})
+    })

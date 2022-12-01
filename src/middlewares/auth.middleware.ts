@@ -17,7 +17,7 @@ export const authMiddleware = async (req: Request, res: Response, next: NextFunc
 
         const userData = authData.split(":")
 
-        if (userData[0] !== "admin" && userData[1] !== "qwerty") {
+        if (userData[0] !== "admin" || userData[1] !== "qwerty") {
             return res.sendStatus(401)
         }
 

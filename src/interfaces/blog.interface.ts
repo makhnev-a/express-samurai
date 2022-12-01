@@ -1,6 +1,10 @@
+import {ObjectId} from "mongodb";
+
 export interface IBlog {
-    id: string
+    _id?: ObjectId
+    id?: string
     name: string
     description: string
     websiteUrl: string
+    createdAt: string
 }
