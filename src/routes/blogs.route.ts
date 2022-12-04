@@ -3,6 +3,8 @@ import {IBlog} from "../interfaces/blog.interface";
 import {authMiddleware} from "../middlewares/auth.middleware";
 import blogValidators from "../validators/blog.validator";
 import {blogRepository} from "../repositories/mongo/blog.repository";
+import {PaginationInterface} from "../interfaces/pagination.interface";
+import {getPageQuery} from "../utils/getPageQuery";
 
 export const blogsRoute = express.Router({})
 
@@ -27,7 +29,8 @@ blogsRoute.post(
     })
 
 blogsRoute.get("/", async (req: Request, res: Response) => {
-    const blogs: IBlog[] = await blogRepository.findAllBlogs()
+    const {page, pageSize} = getPageQuery(req.query)
+    const blogs: PaginationInterface<IBlog[]> = await blogRepository.findAllBlogs(page, pageSize)
     res.status(200).send(blogs)
 })
 
@@ -47,7 +50,6 @@ blogsRoute.delete(
     authMiddleware,
     async (req: Request, res: Response) => {
         const blogId: string = req.params.id
-
         const blog: IBlog | null = await blogRepository.findOneBlog(blogId)
 
         if (!blog) {

@@ -1,12 +1,18 @@
 import {IPost} from "../../interfaces/post.interface";
 import {postCollection} from "../../db/mongoDb";
 import {ObjectId} from "mongodb";
+import {PaginationInterface} from "../../interfaces/pagination.interface";
 
 export const postRepository = {
-    async findAllPosts(): Promise<IPost[]> {
-        const posts: IPost[] = await postCollection.find({}).toArray()
-
-        return posts.map(post => {
+    async findAllPosts(page: number, pageSize: number): Promise<PaginationInterface<IPost[]>> {
+        const total: number = await postCollection.countDocuments()
+        const pagesCount: number = Math.ceil(total / pageSize)
+        const pageSkip = (page - 1) * pageSize
+        const posts: IPost[] = await postCollection.find({})
+            .skip(pageSkip)
+            .limit(pageSize)
+            .toArray()
+        const mappedPosts = posts.map(post => {
             return {
                 id: new ObjectId(post._id).toString(),
                 blogName: post.blogName,
@@ -17,6 +23,14 @@ export const postRepository = {
                 title: post.title
             }
         })
+
+        return {
+            page,
+            pageSize,
+            pagesCount,
+            total,
+            items: mappedPosts
+        }
     },
     async findOnePost(id: string): Promise<IPost | null> {
         try {

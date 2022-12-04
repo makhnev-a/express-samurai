@@ -6,11 +6,14 @@ import {checkIdParamPost} from "../middlewares/error.middleware";
 import {IBlog} from "../interfaces/blog.interface";
 import {postRepository} from "../repositories/mongo/post.repository";
 import {blogRepository} from "../repositories/mongo/blog.repository";
+import {PaginationInterface} from "../interfaces/pagination.interface";
+import {getPageQuery} from "../utils/getPageQuery";
 
 export const postRoute = express.Router({})
 
 postRoute.get("/", async (req: Request, res: Response) => {
-    const posts: IPost[] = await postRepository.findAllPosts()
+    const {page, pageSize} = getPageQuery(req.query)
+    const posts: PaginationInterface<IPost[]> = await postRepository.findAllPosts(page, pageSize)
     res.status(200).send(posts)
 })
 
