@@ -5,13 +5,21 @@ import {PaginationInterface} from "../../interfaces/pagination.interface";
 import {IPost} from "../../interfaces/post.interface";
 
 export const blogRepository = {
-    async findAllBlogs(page: number, pageSize: number): Promise<PaginationInterface<IBlog[]>> {
+    async findAllBlogs(page: number, pageSize: number, sortBy: string, sortDirection: string): Promise<PaginationInterface<IBlog[]>> {
         const totalCount = await blogCollection.countDocuments()
         const pagesCount = Math.ceil(totalCount / pageSize)
         const pageSkip = (page - 1) * pageSize
+
+        /**
+         * Sorting variables
+         */
+        const order = sortDirection === "desc" ? -1 : 1
+        const sortString = JSON.parse(`"${sortBy}": ${order}`)
+
         const blogs = await blogCollection.find({})
             .skip(pageSkip)
             .limit(pageSize)
+            .sort(sortString)
             .toArray()
         const mappedBlogs = blogs.map(blog => {
             return {
@@ -77,13 +85,21 @@ export const blogRepository = {
 
         return result.matchedCount === 1
     },
-    async getPostsByBlogBlogId(page: number, pageSize: number, blogId: string): Promise<PaginationInterface<IPost[]>> {
+    async getPostsByBlogBlogId(page: number, pageSize: number, sortBy: string, sortDirection: string, blogId: string): Promise<PaginationInterface<IPost[]>> {
         const totalCount: number = await postCollection.countDocuments({blogId})
         const pagesCount: number = Math.ceil(totalCount / pageSize)
         const pageSkip: number = (page - 1) * pageSize
+
+        /**
+         * Sorting variables
+         */
+        const order = sortDirection === "desc" ? -1 : 1
+        const sortString = JSON.parse(`"${sortBy}": ${order}`)
+
         const posts: IPost[] = await postCollection.find({blogId})
             .skip(pageSkip)
             .limit(pageSize)
+            .sort(sortString)
             .toArray()
         const mappedPosts: IPost[] = posts.map((post: IPost) => {
             return {

@@ -12,8 +12,8 @@ import {getPageQuery} from "../utils/getPageQuery";
 export const postRoute = express.Router({})
 
 postRoute.get("/", async (req: Request, res: Response) => {
-    const {page, pageSize} = getPageQuery(req.query)
-    const posts: PaginationInterface<IPost[]> = await postRepository.findAllPosts(page, pageSize)
+    const {page, pageSize, sortBy, sortDirection} = getPageQuery(req.query)
+    const posts: PaginationInterface<IPost[]> = await postRepository.findAllPosts(page, pageSize, sortBy, sortDirection)
     res.status(200).send(posts)
 })
 

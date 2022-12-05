@@ -8,7 +8,6 @@ import {PaginationInterface} from "../interfaces/pagination.interface";
 import {getPageQuery} from "../utils/getPageQuery";
 import {IPost} from "../interfaces/post.interface";
 import {postRepository} from "../repositories/mongo/post.repository";
-import {blogCollection} from "../db/mongoDb";
 import {checkErrorsMiddleware} from "../middlewares/error.middleware";
 
 export const blogsRoute = express.Router({})
@@ -34,8 +33,8 @@ blogsRoute.post(
     })
 
 blogsRoute.get("/", async (req: Request, res: Response) => {
-    const {page, pageSize} = getPageQuery(req.query)
-    const blogs: PaginationInterface<IBlog[]> = await blogRepository.findAllBlogs(page, pageSize)
+    const {page, pageSize, sortBy, sortDirection} = getPageQuery(req.query)
+    const blogs: PaginationInterface<IBlog[]> = await blogRepository.findAllBlogs(page, pageSize, sortBy, sortDirection)
     res.status(200).send(blogs)
 })
 
@@ -100,8 +99,8 @@ blogsRoute.get("/:id/posts", async (req: Request, res: Response) => {
         return res.sendStatus(404)
     }
 
-    const {page, pageSize} = getPageQuery(req.query)
-    const postsByBlogId: PaginationInterface<IPost[]> = await blogRepository.getPostsByBlogBlogId(page, pageSize, blogId)
+    const {page, pageSize, sortBy, sortDirection} = getPageQuery(req.query)
+    const postsByBlogId: PaginationInterface<IPost[]> = await blogRepository.getPostsByBlogBlogId(page, pageSize, sortBy, sortDirection,blogId)
 
     res.status(200).send(postsByBlogId)
 })
