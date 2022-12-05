@@ -7,12 +7,12 @@ import {IBlog} from "../interfaces/blog.interface";
 import {postRepository} from "../repositories/mongo/post.repository";
 import {blogRepository} from "../repositories/mongo/blog.repository";
 import {PaginationInterface} from "../interfaces/pagination.interface";
-import {getPageQuery} from "../utils/getPageQuery";
+import {queryParams} from "../utils/queryParams";
 
 export const postRoute = express.Router({})
 
 postRoute.get("/", async (req: Request, res: Response) => {
-    const {page, pageSize, sortBy, sortDirection} = getPageQuery(req.query)
+    const {page, pageSize, sortBy, sortDirection} = queryParams(req.query)
     const posts: PaginationInterface<IPost[]> = await postRepository.findAllPosts(page, pageSize, sortBy, sortDirection)
     res.status(200).send(posts)
 })

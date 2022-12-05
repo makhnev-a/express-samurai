@@ -6,13 +6,14 @@ import {IPost} from "../../interfaces/post.interface";
 import {sortGetValues} from "../../utils/sort";
 
 export const blogRepository = {
-    async findAllBlogs(page: number, pageSize: number, sortBy: string, sortDirection: string): Promise<PaginationInterface<IBlog[]>> {
-        const totalCount = await blogCollection.countDocuments()
+    async findAllBlogs(page: number, pageSize: number, sortBy: string, sortDirection: string, searchNameTerm: string): Promise<PaginationInterface<IBlog[]>> {
+        const search = !searchNameTerm ? "" : searchNameTerm
+        const totalCount = await blogCollection.countDocuments({name: {$regex: search}})
         const pagesCount = Math.ceil(totalCount / pageSize)
         const pageSkip = (page - 1) * pageSize
         const sort = sortGetValues(sortBy, sortDirection)
 
-        const blogs = await blogCollection.find({})
+        const blogs = await blogCollection.find({name: {$regex: search}})
             .skip(pageSkip)
             .limit(pageSize)
             .sort(sort)

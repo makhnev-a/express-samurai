@@ -5,7 +5,7 @@ import blogValidators from "../validators/blog.validator";
 import {contentValidate, shortDescriptionValidate, titleValidate} from "../validators/post.validator";
 import {blogRepository} from "../repositories/mongo/blog.repository";
 import {PaginationInterface} from "../interfaces/pagination.interface";
-import {getPageQuery} from "../utils/getPageQuery";
+import {getPageQuery} from "../utils/queryParams";
 import {IPost} from "../interfaces/post.interface";
 import {postRepository} from "../repositories/mongo/post.repository";
 import {checkErrorsMiddleware} from "../middlewares/error.middleware";
@@ -33,8 +33,8 @@ blogsRoute.post(
     })
 
 blogsRoute.get("/", async (req: Request, res: Response) => {
-    const {page, pageSize, sortBy, sortDirection} = getPageQuery(req.query)
-    const blogs: PaginationInterface<IBlog[]> = await blogRepository.findAllBlogs(page, pageSize, sortBy, sortDirection)
+    const {page, pageSize, sortBy, sortDirection, searchNameTerm} = getPageQuery(req.query)
+    const blogs: PaginationInterface<IBlog[]> = await blogRepository.findAllBlogs(page, pageSize, sortBy, sortDirection, searchNameTerm)
     res.status(200).send(blogs)
 })
 

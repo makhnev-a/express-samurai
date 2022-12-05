@@ -3,6 +3,7 @@ export const getPageQuery = (query: any) => {
     let pageSize = 10
     let sortBy = "createdAt"
     let sortDirection = "desc"
+    let searchNameTerm = null
 
     if (+query.pageNumber) {
         page = +query.pageNumber
@@ -20,10 +21,23 @@ export const getPageQuery = (query: any) => {
         sortDirection = query.sortDirection
     }
 
+    if (query.searchNameTerm) {
+        searchNameTerm = query.searchNameTerm
+    }
+
     return {
         page,
         pageSize,
         sortBy,
-        sortDirection
+        sortDirection,
+        searchNameTerm
     }
+}
+
+export const getSearch = (searchField: string) => {
+    if (!searchField) {
+        return searchField
+    }
+
+    return null
 }
