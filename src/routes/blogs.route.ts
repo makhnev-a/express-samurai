@@ -102,9 +102,9 @@ blogsRoute.get("/:id/posts", async (req: Request, res: Response) => {
 blogsRoute.post(
     "/:id/posts",
     authMiddleware,
-    titleValidate,
-    shortDescriptionValidate,
-    contentValidate,
+    ...titleValidate,
+    ...shortDescriptionValidate,
+    ...contentValidate,
     async (req: Request, res: Response) => {
         const blogId: string = req.params.id
         const {title, shortDescription, content} = req.body
