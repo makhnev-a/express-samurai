@@ -2,23 +2,18 @@ import {IPost} from "../../interfaces/post.interface";
 import {postCollection} from "../../db/mongoDb";
 import {ObjectId} from "mongodb";
 import {PaginationInterface} from "../../interfaces/pagination.interface";
+import {sortGetValues} from "../../utils/sort";
 
 export const postRepository = {
     async findAllPosts(page: number, pageSize: number, sortBy: string, sortDirection: string): Promise<PaginationInterface<IPost[]>> {
         const totalCount: number = await postCollection.countDocuments()
         const pagesCount: number = Math.ceil(totalCount / pageSize)
         const pageSkip = (page - 1) * pageSize
-
-        /**
-         * Sorting variables
-         */
-        const order = sortDirection === "desc" ? -1 : 1
-        const sortString = JSON.parse(`"${sortBy}": ${order}`)
-
+        const sort = sortGetValues(sortBy, sortDirection)
         const posts: IPost[] = await postCollection.find({})
             .skip(pageSkip)
             .limit(pageSize)
-            .sort(sortString)
+            .sort(sort)
             .toArray()
         const mappedPosts = posts.map(post => {
             return {

@@ -3,23 +3,19 @@ import {IBlog} from "../../interfaces/blog.interface";
 import {ObjectId} from "mongodb"
 import {PaginationInterface} from "../../interfaces/pagination.interface";
 import {IPost} from "../../interfaces/post.interface";
+import {sortGetValues} from "../../utils/sort";
 
 export const blogRepository = {
     async findAllBlogs(page: number, pageSize: number, sortBy: string, sortDirection: string): Promise<PaginationInterface<IBlog[]>> {
         const totalCount = await blogCollection.countDocuments()
         const pagesCount = Math.ceil(totalCount / pageSize)
         const pageSkip = (page - 1) * pageSize
-
-        /**
-         * Sorting variables
-         */
-        const order = sortDirection === "desc" ? -1 : 1
-        const sortString = JSON.parse(`"${sortBy}": ${order}`)
+        const sort = sortGetValues(sortBy, sortDirection)
 
         const blogs = await blogCollection.find({})
             .skip(pageSkip)
             .limit(pageSize)
-            .sort(sortString)
+            .sort(sort)
             .toArray()
         const mappedBlogs = blogs.map(blog => {
             return {
@@ -89,17 +85,11 @@ export const blogRepository = {
         const totalCount: number = await postCollection.countDocuments({blogId})
         const pagesCount: number = Math.ceil(totalCount / pageSize)
         const pageSkip: number = (page - 1) * pageSize
-
-        /**
-         * Sorting variables
-         */
-        const order = sortDirection === "desc" ? -1 : 1
-        const sortString = JSON.parse(`"${sortBy}": ${order}`)
-
+        const sort = sortGetValues(sortBy, sortDirection)
         const posts: IPost[] = await postCollection.find({blogId})
             .skip(pageSkip)
             .limit(pageSize)
-            .sort(sortString)
+            .sort(sort)
             .toArray()
         const mappedPosts: IPost[] = posts.map((post: IPost) => {
             return {
