@@ -5,8 +5,8 @@ import {PaginationInterface} from "../../interfaces/pagination.interface";
 
 export const postRepository = {
     async findAllPosts(page: number, pageSize: number): Promise<PaginationInterface<IPost[]>> {
-        const total: number = await postCollection.countDocuments()
-        const pagesCount: number = Math.ceil(total / pageSize)
+        const totalCount: number = await postCollection.countDocuments()
+        const pagesCount: number = Math.ceil(totalCount / pageSize)
         const pageSkip = (page - 1) * pageSize
         const posts: IPost[] = await postCollection.find({})
             .skip(pageSkip)
@@ -28,7 +28,7 @@ export const postRepository = {
             page,
             pageSize,
             pagesCount,
-            total,
+            totalCount,
             items: mappedPosts
         }
     },

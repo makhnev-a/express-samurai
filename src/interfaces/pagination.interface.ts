@@ -1,5 +1,5 @@
 export interface PaginationInterface<T> {
-    total: number
+    totalCount: number
     page: number
     pageSize: number
     pagesCount: number

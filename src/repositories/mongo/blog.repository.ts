@@ -5,8 +5,8 @@ import {PaginationInterface} from "../../interfaces/pagination.interface";
 
 export const blogRepository = {
     async findAllBlogs(page: number, pageSize: number): Promise<PaginationInterface<IBlog[]>> {
-        const total = await blogCollection.countDocuments()
-        const pagesCount = Math.ceil(total / pageSize)
+        const totalCount = await blogCollection.countDocuments()
+        const pagesCount = Math.ceil(totalCount / pageSize)
         const pageSkip = (page - 1) * pageSize
         debugger
         const blogs = await blogCollection.find({})
@@ -27,7 +27,7 @@ export const blogRepository = {
             pagesCount,
             page,
             pageSize,
-            total,
+            totalCount,
             items: mappedBlogs
         }
     },
