@@ -98,10 +98,10 @@ export const blogRepository = {
         })
 
         return {
-            totalCount,
             pagesCount,
             page,
             pageSize,
+            totalCount,
             items: mappedPosts
         }
     },
