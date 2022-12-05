@@ -93,6 +93,12 @@ blogsRoute.put(
 
 blogsRoute.get("/:id/posts", async (req: Request, res: Response) => {
     const blogId: string = req.params.id
+    const blog: IBlog | null = await blogRepository.findOneBlog(blogId)
+
+    if (!blog) {
+        return res.sendStatus(404)
+    }
+
     const {page, pageSize} = getPageQuery(req.query)
     const postsByBlogId: PaginationInterface<IPost[]> = await blogRepository.getPostsByBlogBlogId(page, pageSize, blogId)
 
