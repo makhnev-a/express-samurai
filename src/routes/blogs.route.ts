@@ -8,6 +8,7 @@ import {PaginationInterface} from "../interfaces/pagination.interface";
 import {getPageQuery} from "../utils/getPageQuery";
 import {IPost} from "../interfaces/post.interface";
 import {postRepository} from "../repositories/mongo/post.repository";
+import {blogCollection} from "../db/mongoDb";
 
 export const blogsRoute = express.Router({})
 
@@ -108,6 +109,11 @@ blogsRoute.post(
         const blogId: string = req.params.id
         const {title, shortDescription, content} = req.body
         const blog: IBlog | null = await blogRepository.findOneBlog(blogId)
+
+        if (!blog) {
+            return res.sendStatus(404)
+        }
+
         const post: IPost | null = await postRepository.createPost({
             createdAt: new Date().toISOString(),
             title,
