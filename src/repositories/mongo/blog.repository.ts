@@ -1,14 +1,14 @@
-import {blogCollection} from "../../db/mongoDb";
+import {blogCollection, postCollection} from "../../db/mongoDb";
 import {IBlog} from "../../interfaces/blog.interface";
 import {ObjectId} from "mongodb"
 import {PaginationInterface} from "../../interfaces/pagination.interface";
+import {IPost} from "../../interfaces/post.interface";
 
 export const blogRepository = {
     async findAllBlogs(page: number, pageSize: number): Promise<PaginationInterface<IBlog[]>> {
         const totalCount = await blogCollection.countDocuments()
         const pagesCount = Math.ceil(totalCount / pageSize)
         const pageSkip = (page - 1) * pageSize
-        debugger
         const blogs = await blogCollection.find({})
             .skip(pageSkip)
             .limit(pageSize)
@@ -76,5 +76,33 @@ export const blogRepository = {
         })
 
         return result.matchedCount === 1
-    }
+    },
+    async getPostsByBlogBlogId(page: number, pageSize: number, blogId: string): Promise<PaginationInterface<IPost[]>> {
+        const totalCount: number = await postCollection.countDocuments({blogId})
+        const pagesCount: number = Math.ceil(totalCount / pageSize)
+        const pageSkip: number = (page - 1) * pageSize
+        const posts: IPost[] = await postCollection.find({blogId})
+            .skip(pageSkip)
+            .limit(pageSize)
+            .toArray()
+        const mappedPosts: IPost[] = posts.map((post: IPost) => {
+            return {
+                id: new ObjectId(post._id).toString(),
+                blogName: post.blogName,
+                blogId: post.blogId,
+                content: post.content,
+                shortDescription: post.shortDescription,
+                createdAt: post.createdAt,
+                title: post.title
+            }
+        })
+
+        return {
+            totalCount,
+            pagesCount,
+            page,
+            pageSize,
+            items: mappedPosts
+        }
+    },
 }
