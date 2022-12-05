@@ -1,6 +1,5 @@
 import {body} from "express-validator";
 import {IBlog} from "../interfaces/blog.interface";
-import {blogs} from "../db/local.db";
 import {checkErrorsMiddleware} from "../middlewares/error.middleware";
 import {blogRepository} from "../repositories/mongo/blog.repository";
 
@@ -21,6 +20,12 @@ export const titleValidate = [
 ]
 
 export const shortDescriptionValidate = [
+    body("shortDescription")
+        .custom(value => {
+            console.log(value)
+            debugger
+            return value
+        }),
     body("shortDescription")
         .exists()
         .withMessage({

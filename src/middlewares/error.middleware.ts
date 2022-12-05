@@ -4,6 +4,7 @@ import {IPost} from "../interfaces/post.interface";
 import {postRepository} from "../repositories/mongo/post.repository";
 
 export const checkErrorsMiddleware = (req: Request, res: Response, next: NextFunction) => {
+    debugger
     const myValidationResult = validationResult.withDefaults({
         formatter: error => {
             return error.msg

@@ -9,6 +9,7 @@ import {getPageQuery} from "../utils/getPageQuery";
 import {IPost} from "../interfaces/post.interface";
 import {postRepository} from "../repositories/mongo/post.repository";
 import {blogCollection} from "../db/mongoDb";
+import {checkErrorsMiddleware} from "../middlewares/error.middleware";
 
 export const blogsRoute = express.Router({})
 
@@ -111,6 +112,7 @@ blogsRoute.post(
     ...titleValidate,
     ...shortDescriptionValidate,
     ...contentValidate,
+    checkErrorsMiddleware,
     async (req: Request, res: Response) => {
         const blogId: string = req.params.id
         const {title, shortDescription, content} = req.body
