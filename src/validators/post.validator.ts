@@ -21,12 +21,6 @@ export const titleValidate = [
 
 export const shortDescriptionValidate = [
     body("shortDescription")
-        .custom(value => {
-            console.log(value)
-            debugger
-            return value
-        }),
-    body("shortDescription")
         .exists()
         .withMessage({
             message: "shortDescription field is not exist",
