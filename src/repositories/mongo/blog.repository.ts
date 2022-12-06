@@ -8,12 +8,12 @@ import {sortGetValues} from "../../utils/sort";
 export const blogRepository = {
     async findAllBlogs(page: number, pageSize: number, sortBy: string, sortDirection: string, searchNameTerm: string): Promise<PaginationInterface<IBlog[]>> {
         const search = !searchNameTerm ? "" : searchNameTerm
-        const totalCount = await blogCollection.countDocuments({name: {$regex: search}})
+        const totalCount = await blogCollection.countDocuments({name: {$regex: search, $options: "-i"}})
         const pagesCount = Math.ceil(totalCount / pageSize)
         const pageSkip = (page - 1) * pageSize
         const sort = sortGetValues(sortBy, sortDirection)
 
-        const blogs = await blogCollection.find({name: {$regex: search}})
+        const blogs = await blogCollection.find({name: {$regex: search, $options: "-i"}})
             .skip(pageSkip)
             .limit(pageSize)
             .sort(sort)
