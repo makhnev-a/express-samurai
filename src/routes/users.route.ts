@@ -23,8 +23,13 @@ usersRoute.post(
     [...usersValidators],
     async (req: Request, res: Response) => {
         const {login, password, email} = req.body
+        const user: IUser | null = await userRepositories.createUser(login, password, email)
 
-        return res.sendStatus(200)
+        if (user) {
+            return res.status(201).send(user)
+        }
+
+        return res.sendStatus(400)
     })
 
 usersRoute.delete(
