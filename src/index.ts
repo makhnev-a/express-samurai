@@ -6,6 +6,8 @@ import {postRoute} from "./routes/post.route";
 import {testingRoute} from "./routes/testing.route";
 import {runDb} from "./db/mongoDb";
 import dotenv from "dotenv";
+import {loginRoute} from "./routes/login.route";
+import {usersRoute} from "./routes/users.route";
 
 export const app = express()
 dotenv.config()
@@ -17,6 +19,8 @@ app.use("/api/videos", videoRoute)
 app.use("/api/blogs", blogsRoute)
 app.use("/api/posts", postRoute)
 app.use("/api/testing", testingRoute)
+app.use("/api/login", loginRoute)
+app.use("/api/users", usersRoute)
 
 const startApp = async () => {
     await runDb()

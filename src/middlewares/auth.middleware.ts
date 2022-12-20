@@ -26,3 +26,7 @@ export const authMiddleware = async (req: Request, res: Response, next: NextFunc
         res.sendStatus(401)
     }
 }
+
+export const authLoginMiddleware = async (req: Request, res: Response, next: NextFunction) => {
+
+}

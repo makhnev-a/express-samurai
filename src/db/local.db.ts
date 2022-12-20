@@ -1,5 +1,5 @@
 import {Resolutions} from "../interfaces/video.interface";
-import {blogCollection, postCollection} from "./mongoDb";
+import {blogCollection, postCollection, userCollection} from "./mongoDb";
 
 export let videos = [
     {
@@ -27,4 +27,5 @@ export let videos = [
 export const clearDb = async () => {
     await postCollection.deleteMany({})
     await blogCollection.deleteMany({})
+    await userCollection.deleteMany({})
 }

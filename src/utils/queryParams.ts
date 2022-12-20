@@ -4,6 +4,8 @@ export const getPageQuery = (query: any) => {
     let sortBy = "createdAt"
     let sortDirection = "desc"
     let searchNameTerm = null
+    let searchLoginTerm = null
+    let searchEmailTerm = null
 
     if (+query.pageNumber) {
         page = +query.pageNumber
@@ -25,19 +27,21 @@ export const getPageQuery = (query: any) => {
         searchNameTerm = query.searchNameTerm
     }
 
+    if (query.searchLoginTerm) {
+        searchLoginTerm = query.searchLoginTerm
+    }
+
+    if (query.searchEmailTerm) {
+        searchEmailTerm = query.searchEmailTerm
+    }
+
     return {
         page,
         pageSize,
         sortBy,
         sortDirection,
-        searchNameTerm
+        searchNameTerm,
+        searchLoginTerm,
+        searchEmailTerm
     }
-}
-
-export const getSearch = (searchField: string) => {
-    if (!searchField) {
-        return searchField
-    }
-
-    return null
 }
