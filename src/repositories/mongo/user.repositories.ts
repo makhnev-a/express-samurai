@@ -16,8 +16,10 @@ export const userRepositories = {
             const user = await userCollection.insertOne(newUser)
 
             return {
-                ...newUser,
                 id: new ObjectId(user.insertedId).toString(),
+                login: newUser.login,
+                email: newUser.email,
+                createdAt: newUser.createdAt,
             }
         } catch {
             return null
