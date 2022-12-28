@@ -3,7 +3,7 @@ import {authRepository} from "../repositories/mongo/auth.repository";
 
 export const loginRoute = Router({})
 
-loginRoute.post("/", async (req: Request, res: Response) => {
+loginRoute.post("/login", async (req: Request, res: Response) => {
     const {loginOrEmail, password} = req.body
     const isLogin = await authRepository.login(loginOrEmail, password)
 

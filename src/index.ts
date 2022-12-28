@@ -19,7 +19,7 @@ app.use("/api/videos", videoRoute)
 app.use("/api/blogs", blogsRoute)
 app.use("/api/posts", postRoute)
 app.use("/api/testing", testingRoute)
-app.use("/api/login", loginRoute)
+app.use("/api/auth", loginRoute)
 app.use("/api/users", usersRoute)
 
 const startApp = async () => {
