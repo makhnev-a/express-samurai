@@ -30,32 +30,61 @@ export const userRepositories = {
         const searchEmail = !searchEmailTerm ? "" : searchEmailTerm
         let searchObj = {}
 
-        if (searchLogin && searchEmail) {
-            searchObj = {
-                login: {
-                    $regex: searchLogin, $options: "-i"
-                },
-                email: {
-                    $regex: searchEmail, $options: "-i"
-                }
-            }
-        } else {
-            if (searchLogin) {
-                searchObj = {
+        let func = async (login: string, email: string) => {
+            if (login && email) {
+                return {
                     login: {
                         $regex: searchLogin, $options: "-i"
                     },
-                }
-            } else if (searchEmail) {
-                searchObj = {
                     email: {
                         $regex: searchEmail, $options: "-i"
-                    },
+                    }
+                }
+            } else {
+                if (login) {
+                    return {
+                        login: {
+                            $regex: searchLogin, $options: "-i"
+                        },
+                    }
+                } else if (login) {
+                    return {
+                        email: {
+                            $regex: searchEmail, $options: "-i"
+                        },
+                    }
                 }
             }
         }
 
-        const totalCount = await userCollection.countDocuments(searchObj)
+        // if (searchLogin && searchEmail) {
+        //     searchObj = {
+        //         login: {
+        //             $regex: searchLogin, $options: "-i"
+        //         },
+        //         email: {
+        //             $regex: searchEmail, $options: "-i"
+        //         }
+        //     }
+        // } else {
+        //     if (searchLogin) {
+        //         searchObj = {
+        //             login: {
+        //                 $regex: searchLogin, $options: "-i"
+        //             },
+        //         }
+        //     } else if (searchEmail) {
+        //         searchObj = {
+        //             email: {
+        //                 $regex: searchEmail, $options: "-i"
+        //             },
+        //         }
+        //     }
+        // }
+
+        const search = func(searchLogin, searchEmail)
+
+        const totalCount = await userCollection.countDocuments(search)
         const pagesCount = Math.ceil(totalCount / pageSize)
         const pageSkip = (page - 1) * pageSize
         const sort = sortGetValues(sortBy, sortDirection)
@@ -69,8 +98,8 @@ export const userRepositories = {
             return {
                 id: new ObjectId(user._id).toString(),
                 login: user.login,
+                email: user.email,
                 createdAt: user.createdAt,
-                email: user.email
             }
         })
 
