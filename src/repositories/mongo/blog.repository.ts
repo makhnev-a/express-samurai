@@ -20,10 +20,10 @@ export const blogRepository = {
             .toArray()
         const mappedBlogs = blogs.map(blog => {
             return {
+                id: new ObjectId(blog._id).toString(),
                 name: blog.name,
                 description: blog.description,
                 websiteUrl: blog.websiteUrl,
-                id: new ObjectId(blog._id).toString(),
                 createdAt: blog.createdAt
             }
         })
