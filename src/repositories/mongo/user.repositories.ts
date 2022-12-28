@@ -84,7 +84,7 @@ export const userRepositories = {
 
         const search = func(searchLogin, searchEmail)
 
-        const totalCount = await userCollection.countDocuments(search)
+        const totalCount = await userCollection.countDocuments({})
         const pagesCount = Math.ceil(totalCount / pageSize)
         const pageSkip = (page - 1) * pageSize
         const sort = sortGetValues(sortBy, sortDirection)
