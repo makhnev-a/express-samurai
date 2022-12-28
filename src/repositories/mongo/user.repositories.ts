@@ -39,17 +39,19 @@ export const userRepositories = {
                     $regex: searchEmail, $options: "-i"
                 }
             }
-        } else if (searchLogin) {
-            searchObj = {
-                login: {
-                    $regex: searchLogin, $options: "-i"
-                },
-            }
-        } else if (searchEmail) {
-            searchObj = {
-                email: {
-                    $regex: searchEmail, $options: "-i"
-                },
+        } else {
+            if (searchLogin) {
+                searchObj = {
+                    login: {
+                        $regex: searchLogin, $options: "-i"
+                    },
+                }
+            } else if (searchEmail) {
+                searchObj = {
+                    email: {
+                        $regex: searchEmail, $options: "-i"
+                    },
+                }
             }
         }
 
