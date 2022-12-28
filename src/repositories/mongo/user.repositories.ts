@@ -61,13 +61,21 @@ export const userRepositories = {
             .limit(pageSize)
             .sort(sort)
             .toArray()
+        const mappedUsers: IUser[] = users.map(user => {
+            return {
+                id: new ObjectId(user._id).toString(),
+                login: user.login,
+                createdAt: user.createdAt,
+                email: user.email
+            }
+        })
 
         return {
             pagesCount,
             page,
             pageSize,
             totalCount,
-            items: users
+            items: mappedUsers
         }
     },
     async deleteUserById(id: string): Promise<boolean> {
