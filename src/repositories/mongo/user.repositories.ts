@@ -89,7 +89,7 @@ export const userRepositories = {
         const pageSkip = (page - 1) * pageSize
         const sort = sortGetValues(sortBy, sortDirection)
 
-        const users: IUser[] = await userCollection.find(searchObj)
+        const users: IUser[] = await userCollection.find({})
             .skip(pageSkip)
             .limit(pageSize)
             .sort(sort)
