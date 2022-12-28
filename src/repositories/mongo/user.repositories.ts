@@ -28,9 +28,7 @@ export const userRepositories = {
     async getAllUsers(page: number, pageSize: number, sortBy: string, sortDirection: string, searchEmailTerm: string, searchLoginTerm: string): Promise<PaginationInterface<IUser[]>> {
         const searchLogin = !searchLoginTerm ? "" : searchLoginTerm
         const searchEmail = !searchEmailTerm ? "" : searchEmailTerm
-        let searchObj = {}
-
-        let func = async (login: string, email: string) => {
+        const func = async (login: string, email: string) => {
             if (login && email) {
                 return {
                     login: {
@@ -56,40 +54,14 @@ export const userRepositories = {
                 }
             }
         }
-
-        // if (searchLogin && searchEmail) {
-        //     searchObj = {
-        //         login: {
-        //             $regex: searchLogin, $options: "-i"
-        //         },
-        //         email: {
-        //             $regex: searchEmail, $options: "-i"
-        //         }
-        //     }
-        // } else {
-        //     if (searchLogin) {
-        //         searchObj = {
-        //             login: {
-        //                 $regex: searchLogin, $options: "-i"
-        //             },
-        //         }
-        //     } else if (searchEmail) {
-        //         searchObj = {
-        //             email: {
-        //                 $regex: searchEmail, $options: "-i"
-        //             },
-        //         }
-        //     }
-        // }
-
         const search = func(searchLogin, searchEmail)
 
-        const totalCount = await userCollection.countDocuments({})
+        const totalCount = await userCollection.countDocuments(search)
         const pagesCount = Math.ceil(totalCount / pageSize)
         const pageSkip = (page - 1) * pageSize
         const sort = sortGetValues(sortBy, sortDirection)
 
-        const users: IUser[] = await userCollection.find({})
+        const users: IUser[] = await userCollection.find(search)
             .skip(pageSkip)
             .limit(pageSize)
             .sort(sort)
