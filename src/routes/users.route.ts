@@ -20,9 +20,10 @@ usersRoute.get(
 usersRoute.post(
     "/",
     authMiddleware,
-    // [...usersValidators],
+    [...usersValidators],
     async (req: Request, res: Response) => {
         const {login, password, email} = req.body
+        console.warn(login, password, email)
         const user: IUser | null = await userRepositories.createUser(login, password, email)
 
         if (user) {
