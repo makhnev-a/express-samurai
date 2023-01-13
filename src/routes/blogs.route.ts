@@ -46,7 +46,7 @@ blogsRoute.get("/:id", async (req: Request, res: Response) => {
         return res.status(200).send(blog)
     }
 
-    res.sendStatus(404)
+    res.sendStatus(400)
 })
 
 blogsRoute.delete(
